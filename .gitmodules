@@ -1,0 +1,6 @@
+[submodule "plDcg"]
+	path = plDcg
+	url = https://github.com/wouterbeek/plDcg.git
+[submodule "Prolog-Library-Collection"]
+	path = Prolog-Library-Collection
+	url = https://github.com/wouterbeek/Prolog-Library-Collection.git

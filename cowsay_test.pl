@@ -1,0 +1,40 @@
+:- module(cowsay_test, []).
+
+/** <module> Cowsay test
+
+Automated tests for the Cowsay application.
+
+@author Wouter Beek
+@version 2014/08
+*/
+
+:- use_module(library(plunit)).
+
+:- use_module(cowsay(cowsay)).
+
+
+
+:- begin_tests(cowsay).
+
+cow_sentence("test").
+cow_sentence("Interpret the next argument as a character code and add it to \c
+              the output. This argument must be a valid Unicode character \c
+              code. Note that the actually emitted bytes are defined by the \c
+              character encoding of the output stream and an exception may \c
+              be raised if the output stream is not capable of representing \c
+              the requested Unicode character. See section 2.18.1
+              for details.\c
+             ").
+cow_sentence("%! cowsay(+Options, +Content:or([term,list(terms)])) is det.").
+cow_sentence("\ \ \ \ ^__^\c
+              \ \ \ \ (oo)\\_______\c
+              \ \ \ \ (__)\\       )\\/\\\c
+              \ \ \ \ \ \ \ \ ||----w |\c
+              \ \ \ \ \ \ \ \ ||     ||\c
+").
+
+test(cowsay, [forall(cow_sentence(String)),true]):-
+  cowsay(String).
+
+:- end_tests(cowsay).
+
