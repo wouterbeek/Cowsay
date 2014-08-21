@@ -21,7 +21,6 @@ Based on `cowsay` by Tony Monroe,
 */
 
 :- use_module(library(apply)).
-:- use_module(library(debug)).
 :- use_module(library(lists)).
 :- use_module(library(option)).
 :- use_module(library(settings)).
@@ -32,11 +31,9 @@ Based on `cowsay` by Tony Monroe,
 
 :- use_module(plDcg(dcg_abnf)).
 :- use_module(plDcg(dcg_ascii)).
+:- use_module(plDcg(dcg_content)).
 :- use_module(plDcg(dcg_generic)).
 :- use_module(plDcg(dcg_wrap)).
-
-% The automated finding of meta-predicates seems to be over-eager.
-:- meta_predicate(dcg_speech_bubble_line(+,+,?,?)).
 
 :- setting(
   default_max_width,
@@ -115,7 +112,7 @@ cowsay(Content):-
 cowsay(Contents, Options):-
   is_list(Contents), !,
   maplist(cow_atom, Contents, Atoms),
-  cowsa_atoms(Atoms, Options).
+  cowsay_atoms(Atoms, Options).
 % Since we work with lists, we create a singleton list for single terms.
 cowsay(Content, Options):-
   cowsay_atoms([Content], Options).
@@ -140,20 +137,20 @@ cowsay_atoms(Atoms, Options1):-
     CodeLine3,
     (
       member(Atom, Atoms),
-      
+
       % A single atom may contain multiple lines.
       atomic_list_concat(Lines1, '\n', Atom), % split
-      
+
       % Now we are taling about individual lines proper.
       member(Line1, Lines1),
-      
+
       % Some lines may exceed the maximum allowed width,
       %  so they are  split up further.
       % The way in which this is done depends on
       %  the type of wrapping that is used.
       atom_codes(Line1, CodeLine1),
-      phrase(dcg_wrap(O3), CodeLine1, CodeLine2),
-      
+      phrase(dcg_wrap(Options3), CodeLine1, CodeLine2),
+
       % We need a list for each line in order to determine
       % the speech bubble width.
       phrase(dcg_separated_list(line_feed, CodeLines1), CodeLine2),
@@ -171,11 +168,11 @@ cowsay_atoms(Atoms, Options1):-
   (
     Speech == true
   ->
-    text_to_speech(Atoms)
+    thread_create(text_to_speech(Atoms), _, [detached(true)])
   ;
     true
   ),
- 
+  
   % The cow DCG writes to the given output stream.
   select_option(output(Output), Options4, Options5, user_output),
   dcg_with_output_to(Output, phrase(cow(LineWidth, CodeLines2, Options5))).
@@ -214,15 +211,16 @@ cow(Options1) -->
   % Second line.
   indent(Indent),
   " \\  ",
-  dcg_bracketed(round, dcg_cow_eyes(Options2)),
+  bracketed(round, cow_eyes(Options2)),
   "\\___",
-  '#'(CowLength, underscore),
+  '#'(CowLength, underscore, []),
   "\n",
 
   % Third line.
   indent(AddedIndent),
   "(__)\\   ",
-  '#'(CowLength, space), ")",
+  '#'(CowLength, space, []),
+  ")",
   cow_tail,
   "\n",
 
@@ -230,13 +228,13 @@ cow(Options1) -->
   indent(AddedIndent),
   " ", cow_tongue(Options2),
   " ||",
-  '#'(CowLength, hyphen),
+  '#'(CowLength, hyphen, []),
   "w |\n",
 
   % Fifth line.
   indent(AddedIndent),
   "    ||",
-  '#'(CowLength, space),
+  '#'(CowLength, space, []),
   " ||\n".
 
 
@@ -278,18 +276,18 @@ speech_bubble(LineWidth, CodeLines) -->
 
 speech_bubble_bottom(LineWidth) -->
   "\\-",
-  '#'(LineWidth, hyphen),
+  '#'(LineWidth, hyphen, []),
   "-/".
 
 
-dcg_speech_bubble_line(LineWidth, CodeLine) -->
+speech_bubble_line(LineWidth, CodeLine) -->
   "| ",
   CodeLine,
   {
     length(CodeLine, ContentLength),
     NumberOfSpaces is LineWidth - ContentLength
   },
-  '#'(NumberOfSpaces, " "),
+  '#'(NumberOfSpaces, " ", []),
   " |\n".
 
 
@@ -301,7 +299,7 @@ speech_bubble_lines(LineWidth, [CodeLine|CodeLines]) -->
 
 speech_bubble_top(LineWidth) -->
   "/-",
-  '#'(LineWidth, hyphen),
+  '#'(LineWidth, hyphen, []),
   "-\\".
 
 

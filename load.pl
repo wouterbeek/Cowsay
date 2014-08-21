@@ -1,8 +1,9 @@
 % The load file for the cowsay application.
 
+:- dynamic(user:project/3).
 :- multifile(user:project/3).
    user:project(
-     Cowsay,
+     'Cowsay',
      'A funny cow for communicating with the user.',
      cowsay
    ).

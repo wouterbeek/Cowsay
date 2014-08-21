@@ -26,12 +26,13 @@ cow_sentence("Interpret the next argument as a character code and add it to \c
               for details.\c
              ").
 cow_sentence("%! cowsay(+Options, +Content:or([term,list(terms)])) is det.").
-cow_sentence("\ \ \ \ ^__^\c
-              \ \ \ \ (oo)\\_______\c
-              \ \ \ \ (__)\\       )\\/\\\c
-              \ \ \ \ \ \ \ \ ||----w |\c
-              \ \ \ \ \ \ \ \ ||     ||\c
-").
+cow_sentence(' \c
+^__^\n \c
+ (oo)\\_______\n \c
+ (__)\\       )\\/\\\n     \c
+     ||----w |\n     \c
+     ||     ||\c
+').
 
 test(cowsay, [forall(cow_sentence(String)),true]):-
   cowsay(String).
