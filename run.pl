@@ -15,7 +15,8 @@
 :- initialization(cowsay).
 
 cowsay:-
-  opt_arguments([], _, Message),
-  cowsay(Message),
+  opt_arguments([], _, Atoms),
+  atomics_to_string(Atoms, String),
+  cowsay(String),
   halt.
 

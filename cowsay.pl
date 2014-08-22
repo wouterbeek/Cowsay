@@ -1,13 +1,13 @@
 :- module(
   cowsay,
   [
-    cowsay/1, % +Content
-    cowsay/2 % +Content
+    cowsay/1, % +Message:string
+    cowsay/2 % +Message:string
              % +Options:list(nvpair)
   ]
 ).
 
-/** <module> Cowspeak
+/** <module> Cowsay
 
 A funny cow for communicating with the user.
 
@@ -27,6 +27,7 @@ Based on `cowsay` by Tony Monroe,
 
 :- use_module(generics(codes_ext)).
 :- use_module(generics(option_ext)).
+:- use_module(generics(string_ext)).
 :- use_module(os(tts_ext)).
 
 :- use_module(plDcg(dcg_abnf)).
@@ -44,18 +45,8 @@ Based on `cowsay` by Tony Monroe,
 
 
 
-%! cow_atom(+In:or([atom,pair(atom,list),term]), -Out:atom) is det.
-
-cow_atom(Format-Arguments, Atom):- !,
-  format(atom(Atom), Format, Arguments).
-cow_atom(Atom, Atom):-
-  atom(Atom), !.
-cow_atom(Term, Atom):-
-  term_to_atom(Term, Atom).
-
-
-%! cowsay(+Content:or([term,list(terms)])) is det.
-%! cowsay(+Content:or([term,list(terms)]), +Options) is det.
+%! cowsay(+Message:string) is det.
+%! cowsay(+Mssage:string, +Options) is det.
 % Turns the given text into a cowified message, displaying the given
 % text in the cow's speech bubble.
 %
@@ -74,10 +65,6 @@ cow_atom(Term, Atom):-
 %                 ||----w |
 %                 ||     ||
 % ~~~
-%
-% `Content` can be any term or list of terms.
-% Terms of the form =|Format-ListOfArguments|= are treated specially
-%  and are passed on to format/3.
 %
 % The following options are supported:
 %   * =|eyes(+Eyes:or([atom,list(code)])|=
@@ -106,19 +93,10 @@ cow_atom(Term, Atom):-
 % @tbd When tabs are used in cowsay/2 the width of the speech balloon
 %      cannot be reliable ascertained right now.
 
-cowsay(Content):-
-  cowsay(Content, []).
+cowsay(Message):-
+  cowsay(Message, []).
 
-cowsay(Contents, Options):-
-  is_list(Contents), !,
-  maplist(cow_atom, Contents, Atoms),
-  cowsay_atoms(Atoms, Options).
-% Since we work with lists, we create a singleton list for single terms.
-cowsay(Content, Options):-
-  cowsay_atoms([Content], Options).
-
-% All content is atomic by now.
-cowsay_atoms(Atoms, Options1):-
+cowsay(Message, Options1):-
   % The default wrap mode is wrapping words.
   add_default_option(Options1, wrap_mode, word, Options2),
 
@@ -136,10 +114,8 @@ cowsay_atoms(Atoms, Options1):-
   findall(
     CodeLine3,
     (
-      member(Atom, Atoms),
-
       % A single atom may contain multiple lines.
-      atomic_list_concat(Lines1, '\n', Atom), % split
+      string_list_concat(Lines1, '\n', String), % split
 
       % Now we are taling about individual lines proper.
       member(Line1, Lines1),
@@ -148,7 +124,7 @@ cowsay_atoms(Atoms, Options1):-
       %  so they are  split up further.
       % The way in which this is done depends on
       %  the type of wrapping that is used.
-      atom_codes(Line1, CodeLine1),
+      string_codes(Line1, CodeLine1),
       phrase(dcg_wrap(Options3), CodeLine1, CodeLine2),
 
       % We need a list for each line in order to determine
@@ -172,7 +148,7 @@ cowsay_atoms(Atoms, Options1):-
   ;
     true
   ),
-  
+
   % The cow DCG writes to the given output stream.
   select_option(output(Output), Options4, Options5, user_output),
   dcg_with_output_to(Output, phrase(cow(LineWidth, CodeLines2, Options5))).
