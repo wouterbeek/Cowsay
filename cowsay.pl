@@ -115,7 +115,7 @@ cowsay(Message, Options1):-
     CodeLine3,
     (
       % A single atom may contain multiple lines.
-      string_list_concat(Lines1, '\n', String), % split
+      string_list_concat(Lines1, '\n', Message), % split
 
       % Now we are taling about individual lines proper.
       member(Line1, Lines1),
@@ -144,7 +144,7 @@ cowsay(Message, Options1):-
   (
     Speech == true
   ->
-    thread_create(text_to_speech(Atoms), _, [detached(true)])
+    thread_create(text_to_speech(Message), _, [detached(true)])
   ;
     true
   ),
