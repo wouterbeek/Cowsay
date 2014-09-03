@@ -14,3 +14,5 @@
   plDcg
 ]).
 
+:- use_module(cowsay(cowsay)).
+

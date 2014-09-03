@@ -17,16 +17,16 @@ Based on `cowsay` by Tony Monroe,
 @author Wouter Beek
 @see http://en.wikipedia.org/wiki/Cowsay pointers to cowsay resources.
 @see http://espeak.sourceforge.net/ home of eSpeak.
-@version 2012/09-2012/10, 2013/05-2013/09, 2014/01, 2014/08
+@tbd When tabs are used in cowsay/2 the width of the speech balloon
+     cannot be reliable ascertained right now.
+@version 2012/09-2012/10, 2013/05-2013/09, 2014/01, 2014/08-2014/09
 */
 
 :- use_module(library(apply)).
 :- use_module(library(lists)).
 :- use_module(library(option)).
-:- use_module(library(settings)).
+:- use_module(library(predicate_options)). % Declarations.
 
-:- use_module(generics(codes_ext)).
-:- use_module(generics(option_ext)).
 :- use_module(generics(string_ext)).
 :- use_module(os(tts_ext)).
 
@@ -34,23 +34,46 @@ Based on `cowsay` by Tony Monroe,
 :- use_module(plDcg(dcg_ascii)).
 :- use_module(plDcg(dcg_content)).
 :- use_module(plDcg(dcg_generic)).
+:- use_module(plDcg(dcg_meta)).
 :- use_module(plDcg(dcg_wrap)).
 
-:- setting(
-  default_max_width,
-  integer,
-  40,
-  'The default width of the speech bubble in the number characters.'
-).
+:- predicate_options(cow//1, 1, [
+      pass_to(cow_eyes//1, 1),
+      pass_to(cow_tongue//1, 1)
+    ]).
+:- predicate_options(cow//3, 3, [
+      pass_to(cow//1, 1)
+    ]).
+:- predicate_options(cow_eyes//1, 1, [
+      eyes(+callable),
+      mode(+oneof(['Borg',dead,greedy,paranoia,stoned,tired,wired,youth]))
+    ]).
+:- predicate_options(cow_tongue//1, 1, [
+      mode(+oneof([dead,stoned])),
+      tongue(+callable)
+    ]).
+:- predicate_options(cowsay/2, 2, [
+      max_width(+nonneg),
+      speech(+boolean),
+      wait(+boolean),
+      pass_to(cow//3, 3),
+      pass_to(dcg_wrap//1, 1)
+    ]).
 
 
 
 %! cowsay(+Message:string) is det.
-%! cowsay(+Mssage:string, +Options) is det.
+% @see Like cowsay/2, using all the default options.
+
+cowsay(Message):-
+  cowsay(Message, []).
+
+
+%! cowsay(+Message:string, +Options:list(nvpair)) is det.
 % Turns the given text into a cowified message, displaying the given
 % text in the cow's speech bubble.
 %
-% The cow, as it reflects upon its own cow life:
+% The cow, as it reflects upon its own cowly life:
 % ~~~{.txt}
 % /--------------------------------------\
 % |     ^__^                             |
@@ -67,50 +90,76 @@ Based on `cowsay` by Tony Monroe,
 % ~~~
 %
 % The following options are supported:
-%   * =|eyes(+Eyes:or([atom,list(code)])|=
-%     Either a list of character codes or an atom, the first 2 characters
-%      of which will replace the eyes of the cow.
-%   * =|maximum_width(?MaximumWidth:integer)|=
-%     The maximum number of characters the speech bubble is allowed to have.
-%     If the maximum width is exceeded by any content line, then the
-%      wrap option -- if set -- is used.
-%   * =|mode(+Mode:oneof(['Borg',dead,greedy,paranoia,stoned,tired,wired,youth]))|=
-%     The following process_modes are supported: `Borg`, `dead`, `greedy`,
-%      `paranoia`, `stoned`, `tired`, `wired`, `youth`.
-%   * =|output(+Output)|=
-%     The same output alternatives that apply to with_output_to/2.
-%     The default value is =|stream(user_output)|=.
-%   * =|speech(+OnOrOff:boolean)|=
-%   * =|wrap_mode(+WrapMode:oneof([line,none,word]))|=
-%     Whether `line` wrapping or =word= wrapping (default)
-%     is applied, or neither of those (=none=, e.g. for ASCII art).
 %
-% @arg Options A list of name-value pairs.
-% @arg Contents Either a term or a list of terms.
-%        Processes terms of the form =|Format-ListOfArguments|= specially.
+%   1. =|eyes(+callable)|=
+%      A DCG that produces exactly 2 characters
+%       and that replaces the default cow eyes.
+%      Default: `"oo"`.
+%      If the `eyes` option is absent but the `mode` option is present,
+%      the eyes may be set by the indicated mode.
 %
-% @tbd Split lines by words (in whitespace). Add this to module ATOM_EXT.
-% @tbd When tabs are used in cowsay/2 the width of the speech balloon
-%      cannot be reliable ascertained right now.
-
-cowsay(Message):-
-  cowsay(Message, []).
+%   2. =|max_width(+between(5,inf)|=
+%      The maximum width the speech bubble is allowed to have.
+%      If the maximum width is exceeded by any content line,
+%       content wrapping is used (see option `wrap_mode`
+%       for the wrap mode that is used).
+%      Default: `40`.
+%      The minimum maximum width is 5, since the vertical margins of
+%       the speech bubble take up 4 characters.
+%
+%   3. =|mode(+oneof(['Borg',dead,greedy,paranoia,stoned,tired,wired,youth]))|=
+%      The original **Cowsay** came with a number of modes in which the cow
+%      could appear. These modes can be set with this option.
+%      The following values are supported:
+%
+%        1. `Borg`
+%        2. `dead`
+%        3. `greedy`,
+%        4. `paranoia`
+%        5. `stoned`
+%        6. `tired`
+%        7. `wired`
+%        8. `youth`
+%
+%   4. =|output(+Output)|=
+%      The same output alternatives that apply to with_output_to/2.
+%      Default: `user_output`.
+%
+%   5. =|speech(+boolean)|=
+%      Whether **Cowsay** should use a speech synthesizer for reading
+%       the message out loud.
+%      Default: `true`.
+%
+%   6. `tongue(+callable)`
+%      A DCG that emits exactly one character,
+%      replacing the tongue of the cow.
+%      Default: `" "`.
+%      If the `tongue` option is absent but the `mode` option is present,
+%      the tongue may be set by the indicated mode.
+%
+%   7. =|wait(+boolean)|=
+%      Whether consecutive executions of **Cowsay** should wait
+%       for each other's speech synthesizer to complete.
+%      Default: `true`.
+%
+%   8. Other options are passed to dcg_wrap//1.
 
 cowsay(Message, Options1):-
-  % The default wrap mode is wrapping words.
-  add_default_option(Options1, wrap_mode, word, Options2),
-
   % Determine the maximum width of the speech bubble.
-  setting(default_max_width, DefaultMaxWidth),
-  option(maximum_width(MaximumWidth), Options2, DefaultMaxWidth),
+  select_option(max_width(MaximumWidth), Options1, Options2, 40),
 
-  % Some characters are needed to display the speech bubble itself.
+  % Some characters are needed to display the vertical margins of
+  % the speech bubble.
   MaximumEffectiveWidth is MaximumWidth - 4,
+
+  % Here we assemble the options that are used for wrapping the input message
+  % into display lines.
   merge_options(
     [padding(true),separator(line_feed),wrap_margin(MaximumEffectiveWidth)],
     Options2,
     Options3
   ),
+
   findall(
     CodeLine3,
     (
@@ -139,24 +188,22 @@ cowsay(Message, Options1):-
   maplist(length, CodeLines2, LineLengths),
   max_list(LineLengths, LineWidth),
 
-  % It can talk!
-  select_option(speech(Speech), Options3, Options4, true),
-  (
-    Speech == true
-  ->
-    thread_create(text_to_speech(Message), _, [detached(true)])
-  ;
-    true
-  ),
-
   % The cow DCG writes to the given output stream.
-  select_option(output(Output), Options4, Options5, user_output),
-  dcg_with_output_to(Output, phrase(cow(LineWidth, CodeLines2, Options5))).
+  select_option(output(Output), Options3, Options4, user_output),
+  dcg_with_output_to(Output, phrase(cow(LineWidth, CodeLines2, Options4))),
 
+  % It can talk!
+  (   option(speech(true), Options4, true)
+  ->  (   option(wait(true), Options4, true)
+      ->  text_to_speech(Message)
+      ;   thread_create(text_to_speech(Message), _, [detached(true)])
+      )
+  ;   true
+  ).
 
 
 %! cow(
-%!   +LineWidth:nonneg,
+%!   +LineWidth:between(5,inf),
 %!   +CodeLines:list(list(code)),
 %!   +Options:list(nvpair)
 %! )// is det.
@@ -171,9 +218,8 @@ cow(LineWidth, CodeLines, Options) -->
 %! cow(+Options:list(nvpair))// is det.
 % Emits the actual cow.
 
-cow(Options1) -->
+cow(Options) -->
   {
-    process_modes(Options1, Options2),
     Indent = 4,
     AddToIndent = 2,
     AddedIndent is Indent + AddToIndent,
@@ -187,7 +233,7 @@ cow(Options1) -->
   % Second line.
   indent(Indent),
   " \\  ",
-  bracketed(round, cow_eyes(Options2)),
+  bracketed(round, cow_eyes(Options)),
   "\\___",
   '#'(CowLength, underscore, []),
   "\n",
@@ -202,7 +248,7 @@ cow(Options1) -->
 
   % Fourth line.
   indent(AddedIndent),
-  " ", cow_tongue(Options2),
+  " ", cow_tongue(Options),
   " ||",
   '#'(CowLength, hyphen, []),
   "w |\n",
@@ -214,33 +260,56 @@ cow(Options1) -->
   " ||\n".
 
 
-cow_eyes(Options) -->
-  {
-    option(eyes(Eyes1), Options, `oo`),
-    % Ensure that the eyes are codes
-    % (i.e., apply atom2code conversion if needed).
-    once(atomic_codes(Eyes1, Eyes2)),
-    Eyes2 = [X,Y|_], !
-  },
-  [X,Y].
+%! cow_eyes(+Options:list(nvpair))// is det.
 
+cow_eyes(Options) -->
+  {option(eyes(Dcg), Options)}, !,
+  dcg_call(Dcg).
+cow_eyes(Options) -->
+  {option(mode(Mode), Options, default)},
+  (   {Mode == 'Borg'}
+  ->  "=="
+  ;   {Mode == dead}
+  ->  "XX"
+  ;   {Mode == greedy}
+  ->  "$$"
+  ;   {Mode == paranoia}
+  ->  "@@"
+  ;   {Mode == stoned}
+  ->  "**"
+  ;   {Mode == tired}
+  ->  "--"
+  ;   {Mode == wired}
+  ->  "OO"
+  ;   {Mode == youth}
+  ->  ".."
+  ;   "oo"
+  ).
+
+
+%! cow_tail// is det.
 
 cow_tail -->
   "\\/\\".
 
 
+%! cow_tongue(+Options:list(nvpair))// is det.
+
 cow_tongue(Options) -->
-  {
-    option(tongue(Tongue1), Options, `  `),
-    % Ensure that the eyes are codes
-    % (i.e., apply atom2code conversion if needed).
-    once(atomic_codes(Tongue1, Tongue2)),
-    Tongue2 = [X,Y|_], !
-  },
-  [X,Y].
+  {option(tongue(Dcg), Options)}, !,
+  dcg_call(Dcg).
+cow_tongue(Options) -->
+  {option(mode(Mode), Options, default)},
+  (   {Mode == dead ; Mode == stoned}
+  ->  "U"
+  ;   " "
+  ).
 
 
-%! speech_bubble(+LineWidth:integer, +CodeLines:list(list(code)))//
+%! speech_bubble(
+%!   +LineWidth:between(5,inf),
+%!   +CodeLines:list(list(code))
+%! )// is det.
 % Draws a speech bubble with the given content,
 % and whose content lines have the given length.
 
@@ -250,11 +319,18 @@ speech_bubble(LineWidth, CodeLines) -->
   speech_bubble_bottom(LineWidth), line_feed.
 
 
+%! speech_bubble_bottom(+LineWidth:between(5,inf))// is det.
+
 speech_bubble_bottom(LineWidth) -->
   "\\-",
   '#'(LineWidth, hyphen, []),
   "-/".
 
+
+%! speech_bubble_line(
+%!   +LineWidth:between(5,inf),
+%!   +CodeLine:list(code)
+%! )// is det.
 
 speech_bubble_line(LineWidth, CodeLine) -->
   "| ",
@@ -267,31 +343,21 @@ speech_bubble_line(LineWidth, CodeLine) -->
   " |\n".
 
 
+%! speech_bubble_lines(
+%!   +LineWidth:between(5,inf),
+%!   +CodeLines:list(list(code))
+%! )// is det.
+
 speech_bubble_lines(_LineWidth, []) --> !, [].
 speech_bubble_lines(LineWidth, [CodeLine|CodeLines]) -->
   speech_bubble_line(LineWidth, CodeLine),
   speech_bubble_lines(LineWidth, CodeLines).
 
 
+%! speech_bubble_top(+LineWidth:between(5,inf))// is det.
+
 speech_bubble_top(LineWidth) -->
   "/-",
   '#'(LineWidth, hyphen, []),
   "-\\".
 
-
-
-mode('Borg', [eyes(`==`)]).
-mode(dead, [eyes(`XX`),tongue(`U`)]).
-mode(greedy, [eyes(`$$`)]).
-mode(paranoia, [eyes(`@@`)]).
-mode(stoned, [eyes(`**`),tongue(`U`)]).
-mode(tired, [eyes(`--`)]).
-mode(wired, [eyes(`OO`)]).
-mode(youth, [eyes(`..`)]).
-
-
-process_modes(Options1, Options2):-
-  option(mode(Mode), Options1),
-  mode(Mode, ModeOptions), !,
-  merge_options(ModeOptions, Options1, Options2).
-process_modes(Options, Options).
