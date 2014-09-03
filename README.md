@@ -1,6 +1,6 @@
 # Cowsay
 
-~~~{.txt}
+~~~
 /----------------------------------------------\
 | I'm a funny cow that communicates messages   |
 | to the user.                                 |
