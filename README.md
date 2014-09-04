@@ -1,8 +1,8 @@
 # Cowsay
 
-## Simple use / application
+## Simple
 
-### Installation
+### Simple installation
 
   1.  Compile the latest version of **SWI-Prolog**:
       ~~~
@@ -44,7 +44,7 @@ This results in the following output:
 
 ---
 
-### Application options
+### Simple options
 
 When used as a standalone application, **Cowsay** supports the following
 options that can be given as command-line arguments:
@@ -72,33 +72,33 @@ options that can be given as command-line arguments:
 
 ---
 
-## Advanced use / library
+## Advanced
 
-### Installation as library
+### Advanced installation
 
 Cowsay can be installed as a library from within SWI-Prolog:
-    ~~~{.pl}
-    $ swipl
-    ?- pack_install(cowsay).
-    ~~~
+~~~{.pl}
+$ swipl
+?- pack_install(cowsay).
+~~~
 
-### Usage as library
+### Advanced use
 
 Here is an example in which **Cowsay** is used as a library:
-    ~~~
-    ?- use_module(library(cowsay)).
-    ?- cowsay("Example sentence spoken by the cow.", [mode(paranoia)]).
-    /------------------------------------------------\
-    | Example sentence spoken by the cow.            |
-    \------------------------------------------------/
-            \   ^__^
-             \  (@@)\_______
-                (__)\       )\/\
-                   ||----w |
-                   ||     ||
-    ~~~
+~~~
+?- use_module(library(cowsay)).
+?- cowsay("Example sentence spoken by the cow.", [mode(paranoia)]).
+/------------------------------------------------\
+| Example sentence spoken by the cow.            |
+\------------------------------------------------/
+        \   ^__^
+         \  (@@)\_______
+            (__)\       )\/\
+               ||----w |
+               ||     ||
+~~~
 
-### Full documentation
+### Advanced options
 
 ~~~{.pl}
 cowsay(+Message:string, +Options:list(nvpair)) is det.
