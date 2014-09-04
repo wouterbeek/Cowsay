@@ -1,27 +1,29 @@
 # Cowsay
 
-## Installation
+## Simple use / application
 
-  1.  Compile the latest version of **SWI-Prolog**.
+### Installation
+
+  1.  Compile the latest version of **SWI-Prolog**:
       ~~~
       git clone https://github.com/SWI-Prolog/swipl-devel.git
       cd swipl-devel
       ./build
       ~~~
 
-  2.  Download the latest version of **Cowsay**.
+  2.  Download the latest version of **Cowsay**:
       ~~~
       git clone https://github.com/wouterbeek/Cowsay.git
       ~~~
 
 ---
 
-## Simple use
+### Simple use
 
 Example usage:
 ~~~
-cd Cowsay
-./run.pl "I'm a funny cow that communicates messages to the user. I am based on the old cowsay by Tony Monroe, in combination with the open source speech synthesizer eSpeak."
+$ cd Cowsay
+$ ./run "I'm a funny cow that communicates messages to the user. I am based on the old cowsay by Tony Monroe, in combination with the open source speech synthesizer eSpeak."
 ~~~
 
 This results in the following output:
@@ -40,7 +42,12 @@ This results in the following output:
                 ||     ||
 ~~~
 
-When used as a standalone application, **Cowsay** supports the following arguments:
+---
+
+### Application options
+
+When used as a standalone application, **Cowsay** supports the following
+options that can be given as command-line arguments:
 
 |-------------|------------|---------------------|---------------|
 | Long flag   | Short flag | Value type          | Default value |
@@ -63,12 +70,35 @@ When used as a standalone application, **Cowsay** supports the following argumen
 | --wrap_mode |            | line, none, word    | word          |
 |-------------|------------|---------------------|---------------|
 
-
 ---
 
-## Advanced used
+## Advanced use / library
 
-Cowsay can be 
+### Installation as library
+
+Cowsay can be installed as a library from within SWI-Prolog:
+    ~~~{.pl}
+    $ swipl
+    ?- pack_install(cowsay).
+    ~~~
+
+### Usage as library
+
+Here is an example in which **Cowsay** is used as a library:
+    ~~~
+    ?- use_module(library(cowsay)).
+    ?- cowsay("Example sentence spoken by the cow.", [mode(paranoia)]).
+    /------------------------------------------------\
+    | Example sentence spoken by the cow.            |
+    \------------------------------------------------/
+            \   ^__^
+             \  (@@)\_______
+                (__)\       )\/\
+                   ||----w |
+                   ||     ||
+    ~~~
+
+### Full documentation
 
 ~~~{.pl}
 cowsay(+Message:string, +Options:list(nvpair)) is det.
@@ -139,28 +169,9 @@ The following options are supported:
 
   8. Other options are passed to `dcg_wrap//1`.
 
+---
 
-
-### The cow, as it reflects upon its own cow life
-
-~~~
-/--------------------------------------\
-|     ^__^                             |
-|     (oo)\_______                     |
-|     (__)\       )\/\                 |
-|         ||----w |                    |
-|         ||     ||                    |
-\--------------------------------------/
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-~~~
-
-
-
-### Further reading
+## Further reading
 
 This project is written in [**SWI-Prolog 7**](http://www.swi-prolog.org/)
  and uses the following techniques and features:
@@ -188,4 +199,26 @@ This project is written in [**SWI-Prolog 7**](http://www.swi-prolog.org/)
       [**Prolog-Library-Collection**](https://github.com/wouterbeek/Prolog-Library-Collection.git).
       For example `string_list_concat/3` replicates the behavior of
       the SWI-Prolog built-in `atomic_list_concat/3`.
+
+--
+
+## The cow, as it reflects upon its own cow life
+
+**Cowsay** also supports the display of ASCII art,
+by setting `wrap_mode` to `none`. Example:
+
+~~~
+/--------------------------------------\
+|     ^__^                             |
+|     (oo)\_______                     |
+|     (__)\       )\/\                 |
+|         ||----w |                    |
+|         ||     ||                    |
+\--------------------------------------/
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+~~~
 
