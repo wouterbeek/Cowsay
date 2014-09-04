@@ -62,27 +62,7 @@ options that can be given as command-line arguments:
     <td>boolean</td>
     <td>`false`</td>
   </tr>
-  <tr>
-    <td>`--help`</td>-h         | booleah             | false         |
-  </tr>
-  <tr>
-| --max_width |            | integer             | 50            |
-  </tr>
-  <tr>
-| --message   | -m         | string              |               |
-  </tr>
-  <tr>
-| --mode      |            | Borg, dead, default | default       |
-|             |            | greedy, paranoia,   |               |
-|             |            | stoned, tired,      |               |
-|             |            | wired, youth        |               |
-  </tr>
-  <tr>
-| --speech    |            | boolean             | true          |
-  </tr>
-  <tr>
-| --wrap_mode |            | line, none, word    | word          |
-  </tr>
+</table>
 
 ---
 
