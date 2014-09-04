@@ -1,5 +1,30 @@
 # Cowsay
 
+## Installation
+
+  1.  Compile the latest version of **SWI-Prolog**.
+      ~~~
+      git clone https://github.com/SWI-Prolog/swipl-devel.git
+      cd swipl-devel
+      ./build
+      ~~~
+
+  2.  Download the latest version of **Cowsay**.
+      ~~~
+      git clone https://github.com/wouterbeek/Cowsay.git
+      ~~~
+
+---
+
+## Simple use
+
+Example usage:
+~~~
+cd Cowsay
+./run.pl "I'm a funny cow that communicates messages to the user. I am based on the old cowsay by Tony Monroe, in combination with the open source speech synthesizer eSpeak."
+~~~
+
+This results in the following output:
 ~~~
 /----------------------------------------------\
 | I'm a funny cow that communicates messages   |
@@ -15,9 +40,35 @@
                 ||     ||
 ~~~
 
+When used as a standalone application, **Cowsay** supports the following arguments:
+
+|-------------|------------|---------------------|---------------|
+| Long flag   | Short flag | Value type          | Default value |
+|-------------|------------|---------------------|---------------|
+| --debug     | -d         | boolean             | false         |
+|-------------|------------|---------------------|---------------|
+| --help      | -h         | booleah             | false         |
+|-------------|------------|---------------------|---------------|
+| --max_width |            | integer             | 50            |
+|-------------|------------|---------------------|---------------|
+| --message   | -m         | string              |               |
+|-------------|------------|---------------------|---------------|
+| --mode      |            | Borg, dead, default | default       |
+|             |            | greedy, paranoia,   |               |
+|             |            | stoned, tired,      |               |
+|             |            | wired, youth        |               |
+|-------------|------------|---------------------|---------------|
+| --speech    |            | boolean             | true          |
+|-------------|------------|---------------------|---------------|
+| --wrap_mode |            | line, none, word    | word          |
+|-------------|------------|---------------------|---------------|
 
 
-### Main predicate
+---
+
+## Advanced used
+
+Cowsay can be 
 
 ~~~{.pl}
 cowsay(+Message:string, +Options:list(nvpair)) is det.
@@ -50,19 +101,20 @@ The following options are supported:
      The minimum maximum width is 5, since the vertical margins of
       the speech bubble take up 4 characters.
 
-  3. `mode(+oneof(['Borg',dead,greedy,paranoia,stoned,tired,wired,youth]))`
+  3. `mode(+oneof(['Borg',dead,default,greedy,paranoia,stoned,tired,wired,youth]))`
      The original **Cowsay** came with a number of modes in which the cow
      could appear. These modes can be set with this option.
      The following values are supported:
 
        1. `Borg`
        2. `dead`
-       3. `greedy`,
-       4. `paranoia`
-       5. `stoned`
-       6. `tired`
-       7. `wired`
-       8. `youth`
+       3. `default`
+       4. `greedy`,
+       5. `paranoia`
+       6. `stoned`
+       7. `tired`
+       8. `wired`
+       9. `youth`
 
   4. `output(+Output)`
      The same output alternatives that apply to

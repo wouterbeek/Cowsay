@@ -1,6 +1,7 @@
 :- module(
   cowsay,
   [
+    cow_mode/1, % ?Mode:oneof(['Borg',dead,default,greedy,paranoia,stoned,tired,wired,youth])
     cowsay/1, % +Message:string
     cowsay/2 % +Message:string
              % +Options:list(nvpair)
@@ -46,7 +47,7 @@ Based on `cowsay` by Tony Monroe,
     ]).
 :- predicate_options(cow_eyes//1, 1, [
       eyes(+callable),
-      mode(+oneof(['Borg',dead,greedy,paranoia,stoned,tired,wired,youth]))
+      mode(+oneof(['Borg',dead,default,greedy,paranoia,stoned,tired,wired,youth]))
     ]).
 :- predicate_options(cow_tongue//1, 1, [
       mode(+oneof([dead,stoned])),
@@ -107,19 +108,20 @@ cowsay(Message):-
 %      The minimum maximum width is 5, since the vertical margins of
 %       the speech bubble take up 4 characters.
 %
-%   3. =|mode(+oneof(['Borg',dead,greedy,paranoia,stoned,tired,wired,youth]))|=
+%   3. =|mode(+oneof(['Borg',dead,default,greedy,paranoia,stoned,tired,wired,youth]))|=
 %      The original **Cowsay** came with a number of modes in which the cow
 %      could appear. These modes can be set with this option.
 %      The following values are supported:
 %
 %        1. `Borg`
 %        2. `dead`
-%        3. `greedy`,
-%        4. `paranoia`
-%        5. `stoned`
-%        6. `tired`
-%        7. `wired`
-%        8. `youth`
+%        3. `default`
+%        4. `greedy`,
+%        5. `paranoia`
+%        6. `stoned`
+%        7. `tired`
+%        8. `wired`
+%        9. `youth`
 %
 %   4. =|output(+Output)|=
 %      The same output alternatives that apply to with_output_to/2.
@@ -255,7 +257,7 @@ cow(Options) -->
 
   % Fifth line.
   indent(AddedIndent),
-  "    ||",
+  "   ||",
   '#'(CowLength, space, []),
   " ||\n".
 
@@ -285,6 +287,24 @@ cow_eyes(Options) -->
   ->  ".."
   ;   "oo"
   ).
+
+
+%! cow_mode(
+%!   +Mode:oneof(['Borg',dead,default,greedy,paranoia,stoned,tired,wired,youth])
+%! ) is semidet.
+%! cow_mode(
+%!   -Mode:oneof(['Borg',dead,default,greedy,paranoia,stoned,tired,wired,youth])
+%! ) is multi.
+
+cow_mode('Borg').
+cow_mode(dead).
+cow_mode(default).
+cow_mode(greedy).
+cow_mode(paranoia).
+cow_mode(stoned).
+cow_mode(tired).
+cow_mode(wired).
+cow_mode(youth).
 
 
 %! cow_tail// is det.
