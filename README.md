@@ -57,10 +57,56 @@ options that can be given as command-line arguments:
     <th>Default value</th>
   </tr>
   <tr>
-    <td>`--debug`</td>
-    <td>`-d`</td>
+    <td><code>--debug</code></td>
+    <td><code>-d</code></td>
     <td>boolean</td>
-    <td>`false`</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>--help</code></td>
+    <td><code>-h</code></td>
+    <td>booleah</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>--max_width</code></td>
+    <td></td>
+    <td>integer</td>
+    <td><code>50</code></td>
+  </tr>
+  <tr>
+    <td><code>--message</code></td>
+    <td><code>-m</code></td>
+    <td>string</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><code>--mode</code></td>
+    <td></td>
+    <td>
+      <code>Borg</code>,
+      <code>dead</code>,
+      <code>default</code>,
+      <code>greedy</code>,
+      <code>paranoia</code>,
+      <code>stoned</code>,
+      <code>tired</code>,
+      <code>wired</code>,
+      <code>youth</code>
+    </td>
+    <td><code>default</code></td>
+  </tr>
+  <tr>
+    <td><code>speech</code></td>
+    <td></td>
+    <td>boolean</td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td><code>--wrap_mode</code></td>
+    <td></td>
+    <td><code>line</code>, <code>none</code>, <code>word</code></td>
+    <td><code>word</code></td>
   </tr>
 </table>
 
