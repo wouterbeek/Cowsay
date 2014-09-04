@@ -49,26 +49,40 @@ This results in the following output:
 When used as a standalone application, **Cowsay** supports the following
 options that can be given as command-line arguments:
 
-|-------------|------------|---------------------|---------------|
-| Long flag   | Short flag | Value type          | Default value |
-|-------------|------------|---------------------|---------------|
-| --debug     | -d         | boolean             | false         |
-|-------------|------------|---------------------|---------------|
-| --help      | -h         | booleah             | false         |
-|-------------|------------|---------------------|---------------|
+<table>
+  <tr>
+    <th>Long flag</th>
+    <th>Short flag</th>
+    <th>Value type</th>
+    <th>Default value</th>
+  </tr>
+  <tr>
+    <td>`--debug`</td>
+    <td>`-d`</td>
+    <td>boolean</td>
+    <td>`false`</td>
+  </tr>
+  <tr>
+    <td>`--help`</td>-h         | booleah             | false         |
+  </tr>
+  <tr>
 | --max_width |            | integer             | 50            |
-|-------------|------------|---------------------|---------------|
+  </tr>
+  <tr>
 | --message   | -m         | string              |               |
-|-------------|------------|---------------------|---------------|
+  </tr>
+  <tr>
 | --mode      |            | Borg, dead, default | default       |
 |             |            | greedy, paranoia,   |               |
 |             |            | stoned, tired,      |               |
 |             |            | wired, youth        |               |
-|-------------|------------|---------------------|---------------|
+  </tr>
+  <tr>
 | --speech    |            | boolean             | true          |
-|-------------|------------|---------------------|---------------|
+  </tr>
+  <tr>
 | --wrap_mode |            | line, none, word    | word          |
-|-------------|------------|---------------------|---------------|
+  </tr>
 
 ---
 
@@ -77,7 +91,7 @@ options that can be given as command-line arguments:
 ### Advanced installation
 
 Cowsay can be installed as a library from within SWI-Prolog:
-~~~{.pl}
+~~~
 $ swipl
 ?- pack_install(cowsay).
 ~~~
