@@ -22,6 +22,12 @@ Generic code for debugging a project:
 :- dynamic(user:debug_mode).
 :- multifile(user:debug_mode).
 
+% Display strings of codes as characters instead of numbers.
+:- use_module(library(portray_text)).
+:- portray_text(true).
+:- set_portray_text(min_length, 3).
+:- set_portray_text(ellipsis, 300).
+
 :- initialization(init_debug_mode).
 
 

@@ -31,7 +31,9 @@ Based on `cowsay` by Tony Monroe,
 
 :- use_module(plDcg(dcg_abnf)).
 :- use_module(plDcg(dcg_ascii)).
+:- use_module(plDcg(dcg_atom)).
 :- use_module(plDcg(dcg_bracket)).
+:- use_module(plDcg(dcg_code)).
 :- use_module(plDcg(dcg_content)).
 :- use_module(plDcg(dcg_generics)).
 :- use_module(plDcg(dcg_meta)).
@@ -184,7 +186,6 @@ cowsay(Message, Options1):-
       % The way in which this is done depends on
       %  the type of word wrapping that is used.
       atom_codes(Line1, CodeLine1),
-gtrace,
       phrase(dcg_word_wrap(Options4), CodeLine1, CodeLine2),
 
       % We need a list for each line in order to determine
@@ -361,14 +362,11 @@ speech_bubble_bottom(LineWidth) -->
 
 
 
-%! speech_bubble_line(
-%!   +LineWidth:between(5,inf),
-%!   +CodeLine:list(code)
-%! )// is det.
+%! speech_bubble_line(+LineWidth:between(5,inf), +CodeLine:callable)// is det.
 
 speech_bubble_line(LineWidth, CodeLine) -->
   "| ",
-  CodeLine,
+  '*'(code, CodeLine, []),
   {
     length(CodeLine, ContentLength),
     NumberOfSpaces is LineWidth - ContentLength

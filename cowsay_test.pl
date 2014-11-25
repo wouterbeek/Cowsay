@@ -37,10 +37,9 @@ cow_sentence(' \c
 
 cow_sentence(Atom, MaxWidth, Mode, WordWrap):-
   cow_sentence(Atom),
-  %between(10, 80, MaxWidth),
-  MaxWidth = 50,
-  cow_mode(Mode),
-  member(WordWrap, [hard,soft]).
+  member(WordWrap, [hard,soft]),
+  between(10, 80, MaxWidth),
+  cow_mode(Mode).
 
 test(cowsay, [forall(cow_sentence(Atom,MaxWidth,Mode,WordWrap)),true]):-
   cowsay(
