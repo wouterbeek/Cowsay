@@ -75,7 +75,7 @@ $ swipl
 Here is an example in which **Cowsay** is used as a library:
 ~~~shell
 ?- use_module(library(cowsay)).
-?- cowsay("Example sentence spoken by the cow.", [mode(paranoia)]).
+?- cowsay('Example sentence spoken by the cow.', [mode(paranoia)]).
 /------------------------------------------------\
 | Example sentence spoken by the cow.            |
 \------------------------------------------------/
