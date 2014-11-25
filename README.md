@@ -1,19 +1,22 @@
 # Cowsay
 
-## Simple
+### Installation
 
-### Simple installation
+  1.  Compile the latest version of **SWI-Prolog**:
+      ~~~shell
+      $ git clone https://github.com/SWI-Prolog/swipl-devel.git
+      $ cd swipl-devel
+      $ ./build
+      ~~~
 
-Cowsay can be installed as a library from within
- [SWI-Prolog](http://www.swi-prolog.org/):
-~~~shell
-$ swipl
-?- pack_install(cowsay).
-~~~
+  2.  Download the latest version of **Cowsay**:
+      ~~~shell
+      $ git clone https://github.com/wouterbeek/Cowsay.git
+      ~~~
 
 ---
 
-### Simple use
+### Use
 
 Example usage:
 ~~~shell
@@ -39,7 +42,7 @@ This results in the following output:
 
 ---
 
-### Simple options
+### Command-line options
 
 When used as a standalone application, **Cowsay** supports the following
 options that can be given as command-line arguments:
@@ -56,7 +59,18 @@ options that can be given as command-line arguments:
 
 ---
 
-## Advanced use
+### Install as library
+
+Cowsay can be installed as a library from within
+ [SWI-Prolog](http://www.swi-prolog.org/):
+~~~shell
+$ swipl
+?- pack_install(cowsay).
+~~~
+
+---
+
+### Use as library
 
 Here is an example in which **Cowsay** is used as a library:
 ~~~shell
@@ -71,6 +85,8 @@ Here is an example in which **Cowsay** is used as a library:
                ||----w |
                ||     ||
 ~~~
+
+---
 
 ### Advanced options
 
@@ -138,20 +154,6 @@ The following options are supported:
 
   8. Other options are passed to `dcg_word_wrap//1`.
 
-### Alternative installation: not using SWI-Prolog pack install
-
-  1.  Compile the latest version of **SWI-Prolog**:
-      ~~~shell
-      $ git clone https://github.com/SWI-Prolog/swipl-devel.git
-      $ cd swipl-devel
-      $ ./build
-      ~~~
-
-  2.  Download the latest version of **Cowsay**:
-      ~~~shell
-      $ git clone https://github.com/wouterbeek/Cowsay.git
-      ~~~
-
 ---
 
 ## Further reading
@@ -180,7 +182,7 @@ This project is written in [**SWI-Prolog 7**](http://www.swi-prolog.org/)
 
 ---
 
-## The cow, as it reflects upon its own cow life
+### The cow, as it reflects upon its own cow life
 
 **Cowsay** also supports the display of ASCII art,
  by setting `wrap_mode` to `none`. Example:
