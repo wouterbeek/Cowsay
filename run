@@ -21,21 +21,23 @@
 
 cowsay:-
   % Specify command-line arguments.
-  aggregate_all(
-    set(Mode),
-    cow_mode(Mode),
-    Modes
-  ),
-  Wraps = [line,none,word],
   OptionSpec = [
+      % debug
       [default(false),longflags([debug]),opt(debug),shortflags([d]),type(boolean)],
+      % help
       [default(false),longflags([help]),opt(help),shortflags([h]),type(boolean)],
+      % max_width
       [default(50),longflags([max_width]),opt(max_width),type(integer)],
-      [longflags([message]),opt(message),shortflags([m]),type(string)],
-      [longflags([mode]),opt(mode),type(oneof(Modes))],
+      % message
+      [default(''),longflags([message]),opt(message),shortflags([m]),type(atom)],
+      % mode
+      [default(default),longflags([mode]),opt(mode),type(atom)],
+      % speech
       [default(true),longflags([speech]),opt(speech),type(boolean)],
-      [default(word),longflags([wrap_mode]),opt(wrap),type(oneof(Wraps))]],
-
+      % word_wrap
+      [default(soft),longflags([word_wrap]),shortflags([w]),opt(word_wrap),type(atom)]
+  ],
+  
   % Process command-line arguments.
   run_print_messages(
     opt_arguments(OptionSpec, Options1, PositionalArgs),
@@ -52,24 +54,44 @@ cowsay:-
   select_option(help(Help), Options1, Options2),
   (   Help == true
   ->  opt_help(OptionSpec, Atom),
-      Atoms = [Atom]
-  ;   Atoms = PositionalArgs
+      PositionalAtoms = [Atom]
+  ;   PositionalAtoms = PositionalArgs
   ),
   
   % Combine a message potentially specified via a flag
-  % with positional arguments.
-  select_option(message(Message), Options2, Options3),
-  (   var(Message)
-  ->  Atomics = Atoms
-  ;   Atomics = [Message|Atoms]
+  %  with the one(s) specified in positional arguments.
+  (   select_option(message(Message), Options2, Options3)
+  ->  AllAtoms = [Message|PositionalAtoms]
+  ;   AllAtoms = PositionalAtoms,
+      Options3 = Options2
   ),
 
   % Process the positional arguments.
-  atomics_to_string(Atomics, String),
-
+  atomic_list_concat(AllAtoms, ' ', FullMessage),
+  
+  % Typecheck the `mode` command-line argument.
+  (   option(mode(Mode), Options3)
+  ->  aggregate_all(
+        set(Mode),
+        cow_mode(Mode),
+        Modes
+      ),
+      must_be(oneof(Modes), Mode)
+  ;   true
+  ),
+  
+  % Typecheck the `word_wrap` command-line argument.
+  (   option(word_wrap(WordWrap), Options3)
+  ->  must_be(oneof([hard,none,soft]), WordWrap)
+  ;   true
+  ),
+  
   % Run the Cowsay program.
-  cowsay(String, Options3),
+  cowsay(FullMessage, Options3),
 
   % Automatically exit Prolog.
-  halt.
+  (   option(debug(true), Options3)
+  ->  true
+  ;   halt
+  ).
 
