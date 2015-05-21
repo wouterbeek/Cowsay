@@ -20,24 +20,23 @@ Based on `cowsay` by Tony Monroe,
 @see [Homepage of eSpeak](http://espeak.sourceforge.net/)
 @tbd When tabs are used in cowsay/2 the width of the speech balloon
      cannot be reliable ascertained right now.
-@version 2012/09-2012/10, 2013/05-2013/09, 2014/01, 2014/08-2014/09, 2014/11
+@version 2012-2015
 */
 
 :- use_module(library(apply)).
 :- use_module(library(lists), except([delete/3])).
 :- use_module(library(option)).
 
-:- use_module(os(tts_ext)).
-
-:- use_module(plDcg(dcg_abnf)).
-:- use_module(plDcg(dcg_ascii)).
-:- use_module(plDcg(dcg_atom)).
-:- use_module(plDcg(dcg_bracket)).
-:- use_module(plDcg(dcg_code)).
-:- use_module(plDcg(dcg_content)).
-:- use_module(plDcg(dcg_generics)).
-:- use_module(plDcg(dcg_meta)).
-:- use_module(plDcg(dcg_word_wrap)).
+:- use_module(plc(dcg/dcg_abnf)).
+:- use_module(plc(dcg/dcg_ascii)).
+:- use_module(plc(dcg/dcg_atom)).
+:- use_module(plc(dcg/dcg_bracket)).
+:- use_module(plc(dcg/dcg_code)).
+:- use_module(plc(dcg/dcg_content)).
+:- use_module(plc(dcg/dcg_generics)).
+:- use_module(plc(dcg/dcg_meta)).
+:- use_module(plc(dcg/dcg_word_wrap)).
+:- use_module(plc(os/tts_ext)).
 
 :- meta_predicate(cowsay(+,:)).
 
@@ -45,27 +44,27 @@ is_meta(eyes).
 is_meta(tongue).
 
 :- predicate_options(cow//1, 1, [
-      pass_to(cow_eyes//1, 1),
-      pass_to(cow_tongue//1, 1)
-    ]).
+  pass_to(cow_eyes//1, 1),
+  pass_to(cow_tongue//1, 1)
+]).
 :- predicate_options(cow//3, 3, [
-      pass_to(cow//1, 1)
-    ]).
+  pass_to(cow//1, 1)
+]).
 :- predicate_options(cow_eyes//1, 1, [
-      eyes(+callable),
-      mode(+atom)
-    ]).
+  eyes(+callable),
+  mode(+atom)
+]).
 :- predicate_options(cow_tongue//1, 1, [
-      mode(+atom),
-      tongue(+callable)
-    ]).
+  mode(+atom),
+  tongue(+callable)
+]).
 :- predicate_options(cowsay/2, 2, [
-      max_width(+nonneg),
-      speech(+boolean),
-      wait(+boolean),
-      pass_to(cow//3, 3),
-      pass_to(dcg_word_wrap//1, 1)
-    ]).
+  max_width(+nonneg),
+  speech(+boolean),
+  wait(+boolean),
+  pass_to(cow//3, 3),
+  pass_to(dcg_word_wrap//1, 1)
+]).
 
 
 
@@ -362,7 +361,10 @@ speech_bubble_bottom(LineWidth) -->
 
 
 
-%! speech_bubble_line(+LineWidth:between(5,inf), +CodeLine:callable)// is det.
+%! speech_bubble_line(
+%!   +LineWidth:between(5,inf),
+%!   +CodeLine:list(code)
+%! )// is det.
 
 speech_bubble_line(LineWidth, CodeLine) -->
   "| ",
