@@ -1,0 +1,89 @@
+#! /usr/bin/env swipl
+% -*- mode: prolog; -*-
+
+/** <application> Cowsay application
+
+A funny cow for communicating with the user.
+
+Based on `cowsay` by Tony Monroe, using the open source speech
+synthesizer `eSpeak`.
+
+@see [Pointers to cowsay resources](https://en.wikipedia.org/wiki/Cowsay)
+@see [Homepage of eSpeak](http://espeak.sourceforge.net/)
+
+*/
+
+:- use_module(library(aggregate)).
+:- use_module(library(optparse)).
+
+:- use_module(library(cli)).
+:- use_module(library(string_ext)).
+
+:- use_module(cowsay_lib).
+
+:- initialization(main, main).
+
+main(_) :-
+  aggregate_all(set(Mode), cow_mode(Mode), Modes),
+  Wraps = [hard,none,soft],
+  cli_main(
+    ["cowsay {message} [options]"],
+    optionsSpec{
+      eyes: optionSpec{
+        help: "The eyes of the cow.",
+        longflags: [eyes],
+        shortflags: [e],
+        type: string},
+      indent: optionSpec{
+        default: 0,
+        help: "The number of spaces that is used for indentation (space to the left of the speaking cow).",
+        longflags: [indent],
+        type: nonneg},
+      length: optionSpec{
+        default: 4,
+        help: "The length of the cow's body in characters.",
+        longflags: [length],
+        shortflags: [l],
+        type: positive_integer},
+      max_width: optionSpec{
+        default: 50,
+        help: "The maximum width of the speech bubble in characters.",
+        longflags: [max_width],
+        type: positive_integer},
+      mode: optionSpec{
+        default: default,
+        help: "The mode in which the cow should be displayed.",
+        longflags: [mode],
+        type: oneof(Modes)},
+      padding: optionSpec{
+        default: true,
+        help: "TODO",
+        longflags: [padding],
+        type: boolean},
+      separator: optionSpec{
+        default: line_feed,
+        help: "TODO",
+        longflags: separator,
+        type: oneof([separator])},
+      speech: optionSpec{
+        default: false,
+        help: "Whether or not a speech synthesizer should be used to let the cow read the message aloud.",
+        longflags: [speech],
+        type: boolean},
+      tongue: optionSpec{
+        help: "The tongue of the cow.",
+        longflags: [tongue],
+        shortflags: [t],
+        type: char},
+      word_wrap: optionSpec{
+        default: soft,
+        help: "Which strategy to use for wrapping the message into the speech bubble.",
+        longflags: [word_wrap],
+        shortflags: [w],
+        type: oneof(Wraps)}},
+    main
+  ).
+
+main(Args, Options) :-
+  string_list_concat(Args, ' ', Message),
+  cowsay(Message, Options).

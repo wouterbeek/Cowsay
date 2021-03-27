@@ -1,19 +1,11 @@
-:- module(cowsay_test, []).
+/** <test> Tests for the Cowsay application
 
-/** <module> Cowsay test
-
-Automated tests for the Cowsay application.
-
-@author Wouter Beek
-@version 2015/10
 */
 
 :- use_module(library(lists)).
 :- use_module(library(plunit)).
 
-:- use_module(cowsay_lib).
-
-
+:- use_module(cowsay).
 
 :- begin_tests(cowsay).
 
@@ -35,13 +27,13 @@ cow_sentence(" \c
      ||     ||\c
 ").
 
-cow_sentence(String, MaxWidth, Mode, WordWrap):-
+cow_sentence(String, MaxWidth, Mode, WordWrap) :-
   cow_sentence(String),
   member(WordWrap, [hard,soft]),
   between(10, 80, MaxWidth),
   cow_mode(Mode).
 
-test(cowsay, [forall(cow_sentence(String,MaxWidth,Mode,WordWrap)),true]):-
+test(cowsay, [forall(cow_sentence(String,MaxWidth,Mode,WordWrap)),true]) :-
   cowsay(
     String,
     [max_width(MaxWidth),mode(Mode),speech(false),word_wrap(WordWrap)]

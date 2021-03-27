@@ -1,10 +1,9 @@
-author('Wouter Beek', 'me@wouterbeek.com').
-download('https://github.com/wouterbeek/Cowsay/release/*.zip').
-home('https://github.com/wouterbeek/Cowsay').
-maintainer('Wouter Beek', 'me@wouterbeek.com').
-name('Cowsay').
-packager('Wouter Beek', 'me@wouterbeek.com').
-requires('Prolog-Library-Collection').
+author('Wouter Beek', 'wouter@triply.cc').
+download('https://github.com/wouterbeek/cowsay/release/*.zip').
+home('https://github.com/wouterbeek/cowsay').
+maintainer('Wouter Beek', 'wouter@triply.cc').
+name(cowsay).
+packager('Wouter Beek', 'wouter@triply.cc').
+requires(prolog_library_collection).
 title('A funny cow for communicating with the user.').
-type(app).
-version('0.0.1').
+version('1.0.0').
